@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:lebensmittelplaner/pages/einkaufsliste.dart';
+import 'package:lebensmittelplaner/pages/vorratsliste.dart';
 
-void main() => runApp(const MaterialApp(
-  home: Text('Der Lebensmittelplaner'),
+void main() => runApp(MaterialApp(
+  initialRoute: '/Vorratsliste',
+  routes: {
+    '/Vorratsliste' : (context) => Vorratsliste(),
+    '/Einkaufsliste': (context) => Einkaufsliste(),
+  }
 ));

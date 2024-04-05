@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 
-class Einkaufsliste extends StatelessWidget {
+class Einkaufsliste extends StatefulWidget {
   const Einkaufsliste({super.key});
 
   @override
+  State<Einkaufsliste> createState() => _EinkaufslisteState();
+}
+
+class _EinkaufslisteState extends State<Einkaufsliste> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
+        return Scaffold(
     appBar: AppBar(
       title: const Text("Einkaufsliste"),
     ),

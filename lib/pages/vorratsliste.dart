@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lebensmittelplaner/database/database.dart';
 import 'package:lebensmittelplaner/model/lebensmittel.dart';
 import 'package:intl/intl.dart'; // for date format
-import 'package:intl/date_symbol_data_local.dart'; // for other locales
 import 'dart:developer';
 
 class VorratslistePage extends StatefulWidget {
@@ -51,12 +50,7 @@ class _VorratslistePageState extends State<VorratslistePage> {
     Future refreshLebensmittel() async {
     setState(() => isLoading = true);
 
-    log('Hallo Welt! Log im refreshLebensmittel()');
-
     alleVorratsLebensmittel = await meineDatenbank.instance.read();
-
-    int laenge = alleVorratsLebensmittel.length;
-    log('$laenge');
 
     setState(() => isLoading = false);
  
@@ -67,6 +61,15 @@ class _VorratslistePageState extends State<VorratslistePage> {
       return Scaffold(
       appBar: AppBar(
         title: const Text("Vorratsliste"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            tooltip: 'Open shopping cart',
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/Einkaufsliste');
+            },
+          ),
+        ],
       ),
       body: Center(
            child: Column(

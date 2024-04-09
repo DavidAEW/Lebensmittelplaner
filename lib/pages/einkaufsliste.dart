@@ -8,15 +8,18 @@ class Einkaufsliste extends StatelessWidget {
     return Scaffold(
     appBar: AppBar(
       title: const Text("Einkaufsliste"),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.home),
+          tooltip: 'Open shopping cart',
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/Vorratsliste');
+          },
+        ),
+      ],
     ),
     body: const Center(
       child: Text("Liste an Sachen die eingekauft werden müssen"),
-    ),
-    floatingActionButton: FloatingActionButton(
-      child: Text('Vorratsliste'),
-      onPressed: () {
-        Navigator.pushReplacementNamed(context, '/Vorratsliste');
-      },
     ),
   );
   }

@@ -5,7 +5,7 @@ import 'package:lebensmittelplaner/pages/vorratsliste.dart';
 void main() => runApp(MaterialApp(
   initialRoute: '/Vorratsliste',
   routes: {
-    '/Vorratsliste' : (context) => Vorratsliste(),
+    '/Vorratsliste' : (context) => VorratslistePage(),
     '/Einkaufsliste': (context) => Einkaufsliste(),
   }
 ));

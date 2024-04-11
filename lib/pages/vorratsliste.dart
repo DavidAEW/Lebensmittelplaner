@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lebensmittelplaner/database/database.dart';
 import 'package:lebensmittelplaner/model/lebensmittel.dart';
 import 'package:lebensmittelplaner/pages/addeditvorratsliste.dart';
+import 'package:lebensmittelplaner/widget/vorratslisteCardWidget.dart';
 import 'package:intl/intl.dart'; // for date format
 import 'dart:developer';
 
@@ -32,22 +33,6 @@ class _VorratslistePageState extends State<VorratslistePage> {
   //   super.dispose();
   // }
 
-    // Future addLebensmittel() async {
-
-    //   String testname = "Testobjekt";
-    //   DateTime testmdh = DateTime(2024, 4, 10, 0, 0, 0);
-    //   String testmenge = "10";
-
-    //   final lebensmittel = Lebensmittel(
-    //     name: testname,
-    //     mdh: testmdh,
-    //     menge: testmenge
-    //   );
-
-    //   await meineDatenbank.instance.create(lebensmittel);
-    //   refreshLebensmittel();
-    // }
-
     Future refreshLebensmittel() async {
     setState(() => isLoading = true);
 
@@ -60,33 +45,19 @@ class _VorratslistePageState extends State<VorratslistePage> {
       @override
     Widget build(BuildContext context) {
       return Scaffold(
-      appBar: AppBar(
-        title: const Text("Vorratsliste"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/Einkaufsliste');
-            },
-          ),
-        ],
-      ),
-      body: Center(
-           child: Column(
-            children: List.generate(
-            alleVorratsLebensmittel.length,
-            (index) {
-              final lebensmittel = alleVorratsLebensmittel[index];
-              return Row(
-                children: [
-                  Text(lebensmittel.name),
-                  Text(formatter.format(lebensmittel.mdh!).toString()), //Könnte Probleme machen das Ausrufezeichen!!
-                  Text(lebensmittel.menge as String),
-                ],
-              );
-            }
-            )
-          ),
+        appBar: AppBar(
+          title: const Text("Vorratsliste"),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.shopping_cart),
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/Einkaufsliste');
+              },
+            ),
+          ],
+        ),
+      body: Column(
+        children: alleVorratsLebensmittel.map((lebensmittel) => vorratslisteCardWidget(lebensmittel)).toList(),
       ),
       persistentFooterButtons: [
         IconButton(

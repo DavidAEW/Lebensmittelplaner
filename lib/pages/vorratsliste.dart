@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lebensmittelplaner/database/database.dart';
 import 'package:lebensmittelplaner/model/lebensmittel.dart';
+import 'package:lebensmittelplaner/pages/addeditvorratsliste.dart';
 import 'package:intl/intl.dart'; // for date format
 import 'dart:developer';
 
@@ -31,21 +32,21 @@ class _VorratslistePageState extends State<VorratslistePage> {
   //   super.dispose();
   // }
 
-    Future addLebensmittel() async {
+    // Future addLebensmittel() async {
 
-      String testname = "Testobjekt";
-      DateTime testmdh = DateTime(2024, 4, 10, 0, 0, 0);
-      String testmenge = "10";
+    //   String testname = "Testobjekt";
+    //   DateTime testmdh = DateTime(2024, 4, 10, 0, 0, 0);
+    //   String testmenge = "10";
 
-      final lebensmittel = Lebensmittel(
-        name: testname,
-        mdh: testmdh,
-        menge: testmenge
-      );
+    //   final lebensmittel = Lebensmittel(
+    //     name: testname,
+    //     mdh: testmdh,
+    //     menge: testmenge
+    //   );
 
-      await meineDatenbank.instance.create(lebensmittel);
-      refreshLebensmittel();
-    }
+    //   await meineDatenbank.instance.create(lebensmittel);
+    //   refreshLebensmittel();
+    // }
 
     Future refreshLebensmittel() async {
     setState(() => isLoading = true);
@@ -64,7 +65,6 @@ class _VorratslistePageState extends State<VorratslistePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.shopping_cart),
-            tooltip: 'Open shopping cart',
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/Einkaufsliste');
             },
@@ -88,33 +88,25 @@ class _VorratslistePageState extends State<VorratslistePage> {
             )
           ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => addLebensmittel()),
-      // floatingActionButton: FloatingActionButton(
-      //   child: Text('Einkaufsliste'),
-      //   onPressed: () {
-      //     Navigator.pushReplacementNamed(context, '/Einkaufsliste');
-      //   },
-      // ),
+      persistentFooterButtons: [
+        IconButton(
+          icon: const Icon(Icons.add),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AddEditVorratslistePage()),
+            ).then((_) {
+              refreshLebensmittel();
+            });
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.remove),
+          onPressed: () async {
+            log("remove Lebensmittel");
+          },
+        ),
+      ]
     );
   }
 }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//     appBar: AppBar(
-//       title: const Text("Vorratsliste"),
-//     ),
-//     body: const Center(
-//       child: Text("Liste an Vorräten"),
-//     ),
-//     floatingActionButton: FloatingActionButton(
-//       child: Text('Einkaufsliste'),
-//       onPressed: () {
-//         Navigator.pushReplacementNamed(context, '/Einkaufsliste');
-//       },
-//     ),
-//   );
-//   }
-// }

@@ -74,7 +74,6 @@ class _VorratslistePageState extends State<VorratslistePage> {
         IconButton(
           icon: const Icon(Icons.remove),
           onPressed: () async {
-            log("remove Lebensmittel");
           },
         ),
       ]

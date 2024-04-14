@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lebensmittelplaner/database/database.dart';
-import 'package:lebensmittelplaner/model/lebensmittel.dart';
+import 'package:lebensmittelplaner/database/databasevorraete.dart';
+import 'package:lebensmittelplaner/model/vorraete.dart';
 import 'package:lebensmittelplaner/pages/addeditvorratsliste.dart';
 import 'package:intl/intl.dart'; // for date format
-import 'dart:developer';
 
 class VorratslistePage extends StatefulWidget {
     const VorratslistePage({super.key});
@@ -14,7 +13,7 @@ class VorratslistePage extends StatefulWidget {
 }
 
 class _VorratslistePageState extends State<VorratslistePage> {
-  late List<Lebensmittel> alleVorratsLebensmittel = [];
+  late List<Vorraete> vorraeteList = [];
   bool isLoading = false;
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
@@ -22,7 +21,7 @@ class _VorratslistePageState extends State<VorratslistePage> {
   void initState() {
     super.initState();
 
-    refreshLebensmittel();
+    refreshVorraete();
   }
 
   //   @override
@@ -32,16 +31,16 @@ class _VorratslistePageState extends State<VorratslistePage> {
   //   super.dispose();
   // }
 
-    Future refreshLebensmittel() async {
+    Future refreshVorraete() async {
     setState(() => isLoading = true);
 
-    alleVorratsLebensmittel = await meineDatenbank.instance.read();
+    vorraeteList = await meineDatenbank.instance.read();
 
     setState(() => isLoading = false);
  
   }
 
-Future deleteLebensmittel(id) async{
+Future deleteVorraete(id) async{
   await meineDatenbank.instance.delete(id);
 }
 
@@ -60,20 +59,20 @@ Future deleteLebensmittel(id) async{
           ],
         ),
       body: ListView.builder(
-        itemCount: alleVorratsLebensmittel.length,
+        itemCount: vorraeteList.length,
         itemBuilder: (context, index){
           return Card(
             child: ListTile(
               title: Column( children: [
-                Text(alleVorratsLebensmittel[index].name),
-                Text(formatter.format(alleVorratsLebensmittel[index].mdh!).toString()), //Könnte Probleme machen das Ausrufezeichen!!
-                Text(alleVorratsLebensmittel[index].menge as String),
+                Text(vorraeteList[index].name),
+                Text(vorraeteList[index].mdh != null ? formatter.format(vorraeteList[index].mdh!).toString() : ''), //Könnte Probleme machen das Ausrufezeichen!!
+                Text(vorraeteList[index].menge as String),
               ]),
               trailing: 
               IconButton(
                 onPressed: () async {
-                  await deleteLebensmittel(alleVorratsLebensmittel[index].id);
-                  refreshLebensmittel();
+                  await deleteVorraete(vorraeteList[index].id);
+                  refreshVorraete();
                 },
                 icon: const Icon(Icons.delete),
               ),
@@ -90,7 +89,7 @@ Future deleteLebensmittel(id) async{
               context,
               MaterialPageRoute(builder: (context) => const AddEditVorratslistePage()),
             ).then((_) {
-              refreshLebensmittel();
+              refreshVorraete();
             });
           },
         ),

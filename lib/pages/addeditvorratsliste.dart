@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lebensmittelplaner/database/database.dart';
-import 'package:lebensmittelplaner/model/lebensmittel.dart';
-
-import 'dart:developer';
+import 'package:lebensmittelplaner/database/databasevorraete.dart';
+import 'package:lebensmittelplaner/model/vorraete.dart';
 
 class AddEditVorratslistePage extends StatefulWidget {
   const AddEditVorratslistePage({super.key});
@@ -12,14 +10,15 @@ class AddEditVorratslistePage extends StatefulWidget {
 }
 
 class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
-    DateTime gewahltesDatum = DateTime.now();
+    DateTime? gewahltesDatum;
+    DateTime heutigesDatum = DateTime.now();
     final TextEditingController nameController = TextEditingController();
     final TextEditingController mengeController = TextEditingController();
 
     Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
-        initialDate: gewahltesDatum,
+        initialDate: heutigesDatum,
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
       if (picked != null && picked != gewahltesDatum) {
@@ -28,15 +27,15 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
         });
       }
     } 
-    Future addLebensmittel(String name, DateTime mdh, String menge) async {
+    Future addVorraete(String name, DateTime? mdh, String menge) async {
 
-      final lebensmittel = Lebensmittel(
+      final vorraete = Vorraete(
         name: name,
         mdh: mdh,
         menge: menge,
       );
 
-      await meineDatenbank.instance.create(lebensmittel);
+      await meineDatenbank.instance.create(vorraete);
     }
 
   @override
@@ -66,7 +65,7 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text("${gewahltesDatum.toLocal()}".split(' ')[0]),
+                  Text("${gewahltesDatum?.toLocal()}".split(' ')[0]),
                   const SizedBox(height: 20.0,),
                   ElevatedButton(
                     onPressed: () => _selectDate(context),
@@ -76,7 +75,7 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
               ),
               TextButton(
                 onPressed: () async {
-                  addLebensmittel(nameController.text, gewahltesDatum, mengeController.text);
+                  addVorraete(nameController.text, gewahltesDatum, mengeController.text);
                   Navigator.of(context).pop();
                 }, 
                 child: 

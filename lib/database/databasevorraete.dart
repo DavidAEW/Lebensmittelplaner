@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:lebensmittelplaner/model/lebensmittel.dart';
+import 'package:lebensmittelplaner/model/vorraete.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -15,7 +15,7 @@ class meineDatenbank {
   Future<Database> get database async {
     if(_database != null) return _database!;
 
-    _database = await _initDB('lebensmittel.db');
+    _database = await _initDB('vorraete.db');
     return _database!;
   }
 
@@ -30,38 +30,39 @@ class meineDatenbank {
 
     final idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     final textType = 'TEXT NOT NULL';
+    final textTypeNull = 'TEXT';
 
-    await db.execute('''CREATE TABLE $tableLebensmittel (
-      ${LebensmittelFields.id} $idType,
-      ${LebensmittelFields.name} $textType,
-      ${LebensmittelFields.mdh} $textType,
-      ${LebensmittelFields.menge} $textType
+    await db.execute('''CREATE TABLE $tableVorraete (
+      ${VorraeteFields.id} $idType,
+      ${VorraeteFields.name} $textType,
+      ${VorraeteFields.mdh} $textTypeNull,
+      ${VorraeteFields.menge} $textTypeNull
       ) 
       '''); 
   }
 
-  Future<Lebensmittel> create(Lebensmittel lebensmittel) async {
+  Future<Vorraete> create(Vorraete vorraete) async {
     final db = await instance.database;
 
-    final id = await db.insert(tableLebensmittel, lebensmittel.toJson());
-    return lebensmittel.copy(id: id);
+    final id = await db.insert(tableVorraete, vorraete.toJson());
+    return vorraete.copy(id: id);
   }
 
-  Future<List<Lebensmittel>> read() async {
+  Future<List<Vorraete>> read() async {
     final db = await instance.database;
-    final result = await db.query(tableLebensmittel);
+    final result = await db.query(tableVorraete);
 
-    return result.map((json) => Lebensmittel.fromJson(json)).toList();
+    return result.map((json) => Vorraete.fromJson(json)).toList();
   }
 
-    Future<int> update(Lebensmittel lebensmittel) async {
+    Future<int> update(Vorraete vorraete) async {
     final db = await instance.database;
 
     return db.update(
-      tableLebensmittel,
-      lebensmittel.toJson(),
-      where: '${LebensmittelFields.id} = ?',
-      whereArgs: [lebensmittel.id],
+      tableVorraete,
+      vorraete.toJson(),
+      where: '${VorraeteFields.id} = ?',
+      whereArgs: [vorraete.id],
     );
   }
 
@@ -69,8 +70,8 @@ class meineDatenbank {
     final db = await instance.database;
 
     return await db.delete(
-      tableLebensmittel,
-      where: '${LebensmittelFields.id} =?',
+      tableVorraete,
+      where: '${VorraeteFields.id} =?',
       whereArgs: [id],
     );
   }

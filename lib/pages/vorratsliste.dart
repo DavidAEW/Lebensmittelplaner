@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lebensmittelplaner/database/database.dart';
 import 'package:lebensmittelplaner/model/lebensmittel.dart';
 import 'package:lebensmittelplaner/pages/addeditvorratsliste.dart';
-import 'package:lebensmittelplaner/widget/vorratslisteCardWidget.dart';
 import 'package:intl/intl.dart'; // for date format
 import 'dart:developer';
 
@@ -42,6 +41,10 @@ class _VorratslistePageState extends State<VorratslistePage> {
  
   }
 
+Future deleteLebensmittel(id) async{
+  await meineDatenbank.instance.delete(id);
+}
+
       @override
     Widget build(BuildContext context) {
       return Scaffold(
@@ -56,9 +59,29 @@ class _VorratslistePageState extends State<VorratslistePage> {
             ),
           ],
         ),
-      body: Column(
-        children: alleVorratsLebensmittel.map((lebensmittel) => vorratslisteCardWidget(lebensmittel)).toList(),
+      body: ListView.builder(
+        itemCount: alleVorratsLebensmittel.length,
+        itemBuilder: (context, index){
+          return Card(
+            child: ListTile(
+              title: Column( children: [
+                Text(alleVorratsLebensmittel[index].name),
+                Text(formatter.format(alleVorratsLebensmittel[index].mdh!).toString()), //Könnte Probleme machen das Ausrufezeichen!!
+                Text(alleVorratsLebensmittel[index].menge as String),
+              ]),
+              trailing: 
+              IconButton(
+                onPressed: () async {
+                  await deleteLebensmittel(alleVorratsLebensmittel[index].id);
+                  refreshLebensmittel();
+                },
+                icon: const Icon(Icons.delete),
+              ),
+            ),
+          );
+        }
       ),
+
       persistentFooterButtons: [
         IconButton(
           icon: const Icon(Icons.add),

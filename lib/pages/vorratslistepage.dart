@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lebensmittelplaner/database/databasevorraete.dart';
 import 'package:lebensmittelplaner/model/vorraete.dart';
-import 'package:lebensmittelplaner/pages/addeditvorratsliste.dart';
+import 'package:lebensmittelplaner/pages/addeditvorratslistepage.dart';
 import 'package:intl/intl.dart'; // for date format
 
 class VorratslistePage extends StatefulWidget {

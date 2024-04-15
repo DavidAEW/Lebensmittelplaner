@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/services.dart';
 import 'package:lebensmittelplaner/model/vorraete.dart';
 import 'package:path/path.dart';
@@ -28,9 +27,9 @@ class meineDatenbank {
 
   Future _createDB(Database db, int version) async {
 
-    final idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    final textType = 'TEXT NOT NULL';
-    final textTypeNull = 'TEXT';
+    const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    const textType = 'TEXT NOT NULL';
+    const textTypeNull = 'TEXT';
 
     await db.execute('''CREATE TABLE $tableVorraete (
       ${VorraeteFields.id} $idType,
@@ -50,7 +49,10 @@ class meineDatenbank {
 
   Future<List<Vorraete>> read() async {
     final db = await instance.database;
-    final result = await db.query(tableVorraete);
+    final result = await db.query(
+      tableVorraete, 
+      orderBy: "case when vorraete.mdh is null then 1 else 0 end, vorraete.mdh"
+    );
 
     return result.map((json) => Vorraete.fromJson(json)).toList();
   }

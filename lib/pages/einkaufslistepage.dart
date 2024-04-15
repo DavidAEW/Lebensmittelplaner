@@ -16,6 +16,7 @@ class EinkaufslistePage extends StatefulWidget {
 class _EinkaufslistePageState extends State<EinkaufslistePage> {
   late List<Einkaufsliste> einkaufslisteList = [];
   bool isLoading = false;
+  bool showdeleteButton = false;
 
     @override 
   void initState() {
@@ -89,13 +90,13 @@ Future addVorraete(String name, String? menge) async {
               ),
 
               trailing: 
-              IconButton(
+              showdeleteButton ? IconButton(
                 onPressed: () async {
                   await deleteEinkaufsliste(einkaufslisteList[index].id);
                   refreshEinkaufsliste();
                 },
                 icon: const Icon(Icons.delete),
-              ),
+              ) : null,
             ),
           );
         }
@@ -116,6 +117,14 @@ Future addVorraete(String name, String? menge) async {
         IconButton(
           icon: const Icon(Icons.remove),
           onPressed: () async {
+            if(showdeleteButton){
+              showdeleteButton = false;
+            } else {
+              showdeleteButton = true;
+            }
+            setState(() {
+            
+            });
           },
         ),
       ]

@@ -15,6 +15,7 @@ class VorratslistePage extends StatefulWidget {
 class _VorratslistePageState extends State<VorratslistePage> {
   late List<Vorraete> vorraeteList = [];
   bool isLoading = false;
+  bool showdeleteButton = false;
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
     @override 
@@ -37,8 +38,7 @@ class _VorratslistePageState extends State<VorratslistePage> {
     vorraeteList = await meineDatenbank.instance.read();
 
     setState(() => isLoading = false);
- 
-  }
+    }
 
 Future deleteVorraete(id) async{
   await meineDatenbank.instance.delete(id);
@@ -69,13 +69,13 @@ Future deleteVorraete(id) async{
                 Text(vorraeteList[index].menge as String),
               ]),
               trailing: 
-              IconButton(
+              showdeleteButton ? IconButton(
                 onPressed: () async {
                   await deleteVorraete(vorraeteList[index].id);
                   refreshVorraete();
                 },
                 icon: const Icon(Icons.delete),
-              ),
+              ) : null,
             ),
           );
         }
@@ -96,6 +96,14 @@ Future deleteVorraete(id) async{
         IconButton(
           icon: const Icon(Icons.remove),
           onPressed: () async {
+            if(showdeleteButton){
+              showdeleteButton = false;
+            } else {
+              showdeleteButton = true;
+            }
+            setState(() {
+            
+            });
           },
         ),
       ]

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/services.dart';
 import 'package:lebensmittelplaner/model/einkaufsliste.dart';
 import 'package:path/path.dart';
@@ -49,7 +48,7 @@ class einkaufslisteDB {
 
   Future<List<Einkaufsliste>> read() async {
     final db = await instance.database;
-    final result = await db.query(tableEinkaufsliste);
+    final result = await db.query(tableEinkaufsliste, orderBy: "einkaufsliste.name");
 
     return result.map((json) => Einkaufsliste.fromJson(json)).toList();
   }

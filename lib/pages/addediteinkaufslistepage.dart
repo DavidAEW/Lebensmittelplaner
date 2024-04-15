@@ -3,24 +3,40 @@ import 'package:lebensmittelplaner/database/databaseeinkaufsliste.dart';
 import 'package:lebensmittelplaner/model/einkaufsliste.dart';
 
 class AddEditEinkaufslistePage extends StatefulWidget {
-  const AddEditEinkaufslistePage({super.key});
+
+  final Einkaufsliste? einkaufsliste;
+  
+  const AddEditEinkaufslistePage({Key? key, this.einkaufsliste}) : super(key: key);
 
   @override
   State<AddEditEinkaufslistePage> createState() => _AddEditEinkaufslistePageState();
 }
 
 class _AddEditEinkaufslistePageState extends State<AddEditEinkaufslistePage> {
-    final TextEditingController nameController = TextEditingController();
-    final TextEditingController mengeController = TextEditingController();
 
-    Future addEinkaufsliste(String name, String menge) async {
+    late TextEditingController nameController;
+    late TextEditingController mengeController;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController(text: widget.einkaufsliste?.name ?? '');
+    mengeController = TextEditingController(text: widget.einkaufsliste?.menge ?? '');
+  }
+
+    Future addEinkaufsliste(int? id, String name, String menge) async {
 
       final einkaufsliste = Einkaufsliste(
+        id: id,
         name: name,
         menge: menge,
       );
 
-      await einkaufslisteDB.instance.create(einkaufsliste);
+      if(einkaufsliste.id == null){
+        await einkaufslisteDB.instance.create(einkaufsliste);
+      } else{
+        await einkaufslisteDB.instance.update(einkaufsliste);
+      }
     }
 
   @override
@@ -49,7 +65,7 @@ class _AddEditEinkaufslistePageState extends State<AddEditEinkaufslistePage> {
 
               TextButton(
                 onPressed: () async {
-                  addEinkaufsliste(nameController.text, mengeController.text);
+                  addEinkaufsliste(widget.einkaufsliste?.id, nameController.text, mengeController.text);
                   Navigator.of(context).pop();
                 }, 
                 child: 

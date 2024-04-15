@@ -74,11 +74,18 @@ Future addVorraete(String name, String? menge) async {
         itemBuilder: (context, index){
           return Card(
             child: ListTile(
+              onTap: () {
+                Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddEditEinkaufslistePage(einkaufsliste: einkaufslisteList[index])),
+              ).then((_) {
+                refreshEinkaufsliste();
+                });
+              },
               title: Column( children: [
                 Text(einkaufslisteList[index].name),
                 Text(einkaufslisteList[index].menge as String),
               ]),
-
               leading:
               IconButton(
                 onPressed: () async {

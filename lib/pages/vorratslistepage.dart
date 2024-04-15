@@ -3,6 +3,7 @@ import 'package:lebensmittelplaner/database/databasevorraete.dart';
 import 'package:lebensmittelplaner/model/vorraete.dart';
 import 'package:lebensmittelplaner/pages/addeditvorratslistepage.dart';
 import 'package:intl/intl.dart'; // for date format
+import 'dart:developer';
 
 class VorratslistePage extends StatefulWidget {
     const VorratslistePage({super.key});
@@ -63,6 +64,14 @@ Future deleteVorraete(id) async{
         itemBuilder: (context, index){
           return Card(
             child: ListTile(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddEditVorratslistePage(vorraete: vorraeteList[index])),
+                ).then((_) {
+                  refreshVorraete();
+                });
+              },
               title: Column( children: [
                 Text(vorraeteList[index].name),
                 Text(vorraeteList[index].mdh != null ? formatter.format(vorraeteList[index].mdh!).toString() : ''), //Könnte Probleme machen das Ausrufezeichen!!

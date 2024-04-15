@@ -3,7 +3,10 @@ import 'package:lebensmittelplaner/database/databasevorraete.dart';
 import 'package:lebensmittelplaner/model/vorraete.dart';
 
 class AddEditVorratslistePage extends StatefulWidget {
-  const AddEditVorratslistePage({super.key});
+
+  final Vorraete? vorraete;
+  
+  const AddEditVorratslistePage({Key? key, this.vorraete}) : super(key: key);
 
   @override
   State<AddEditVorratslistePage> createState() => _AddEditVorratslistePageState();
@@ -12,8 +15,16 @@ class AddEditVorratslistePage extends StatefulWidget {
 class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
     DateTime? gewahltesDatum;
     DateTime heutigesDatum = DateTime.now();
-    final TextEditingController nameController = TextEditingController();
-    final TextEditingController mengeController = TextEditingController();
+    late TextEditingController nameController;
+    late TextEditingController mengeController;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController(text: widget.vorraete?.name ?? '');
+    mengeController = TextEditingController(text: widget.vorraete?.menge ?? '');
+    gewahltesDatum = widget.vorraete?.mdh ?? null;
+  }
 
     Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -27,15 +38,20 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
         });
       }
     } 
-    Future addVorraete(String name, DateTime? mdh, String menge) async {
+    Future addEditVorraete(int? id, String name, DateTime? mdh, String? menge) async {
 
       final vorraete = Vorraete(
+        id: id,
         name: name,
         mdh: mdh,
         menge: menge,
       );
 
-      await meineDatenbank.instance.create(vorraete);
+      if(vorraete.id == null){
+        await meineDatenbank.instance.create(vorraete);
+      } else{
+        await meineDatenbank.instance.update(vorraete);
+      }
     }
 
   @override
@@ -75,7 +91,7 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
               ),
               TextButton(
                 onPressed: () async {
-                  addVorraete(nameController.text, gewahltesDatum, mengeController.text);
+                  addEditVorraete(widget.vorraete?.id, nameController.text, gewahltesDatum, mengeController.text);
                   Navigator.of(context).pop();
                 }, 
                 child: 

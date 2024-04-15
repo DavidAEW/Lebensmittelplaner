@@ -50,6 +50,7 @@ Future addVorraete(String name, String? menge) async {
   final vorraete = Vorraete(
     name: name,
     menge: menge,
+    benoetigtMdh: true,
   );
 
   await meineDatenbank.instance.create(vorraete);

@@ -30,12 +30,14 @@ class meineDatenbank {
     const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const textType = 'TEXT NOT NULL';
     const textTypeNull = 'TEXT';
+    const boolType = 'BOOLEAN NOT NULL';
 
     await db.execute('''CREATE TABLE $tableVorraete (
       ${VorraeteFields.id} $idType,
       ${VorraeteFields.name} $textType,
       ${VorraeteFields.mdh} $textTypeNull,
-      ${VorraeteFields.menge} $textTypeNull
+      ${VorraeteFields.menge} $textTypeNull,
+      ${VorraeteFields.benoetigtMdh} $boolType
       ) 
       '''); 
   }

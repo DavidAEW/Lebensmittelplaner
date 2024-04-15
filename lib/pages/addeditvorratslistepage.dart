@@ -14,6 +14,7 @@ class AddEditVorratslistePage extends StatefulWidget {
 
 class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
     DateTime? gewahltesDatum;
+    late bool benoetigtMdh;
     DateTime heutigesDatum = DateTime.now();
     late TextEditingController nameController;
     late TextEditingController mengeController;
@@ -24,6 +25,7 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
     nameController = TextEditingController(text: widget.vorraete?.name ?? '');
     mengeController = TextEditingController(text: widget.vorraete?.menge ?? '');
     gewahltesDatum = widget.vorraete?.mdh ?? null;
+    benoetigtMdh = widget.vorraete?.benoetigtMdh ?? false;
   }
 
     Future<void> _selectDate(BuildContext context) async {
@@ -38,13 +40,14 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
         });
       }
     } 
-    Future addEditVorraete(int? id, String name, DateTime? mdh, String? menge) async {
+    Future addEditVorraete(int? id, String name, DateTime? mdh, String? menge, bool benoetigtMdh) async {
 
       final vorraete = Vorraete(
         id: id,
         name: name,
         mdh: mdh,
         menge: menge,
+        benoetigtMdh: benoetigtMdh,
       );
 
       if(vorraete.id == null){
@@ -91,7 +94,12 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
               ),
               TextButton(
                 onPressed: () async {
-                  addEditVorraete(widget.vorraete?.id, nameController.text, gewahltesDatum, mengeController.text);
+                  addEditVorraete(
+                    widget.vorraete?.id, 
+                    nameController.text, 
+                    gewahltesDatum, 
+                    mengeController.text, 
+                  benoetigtMdh);
                   Navigator.of(context).pop();
                 }, 
                 child: 

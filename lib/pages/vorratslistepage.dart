@@ -15,6 +15,7 @@ class VorratslistePage extends StatefulWidget {
 
 class _VorratslistePageState extends State<VorratslistePage> {
   late List<Vorraete> vorraeteList = [];
+  late List<Vorraete> vorrateListMitBenoetigenMdh = [];
   bool isLoading = false;
   bool showdeleteButton = false;
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -37,6 +38,7 @@ class _VorratslistePageState extends State<VorratslistePage> {
     setState(() => isLoading = true);
 
     vorraeteList = await meineDatenbank.instance.read();
+    vorrateListMitBenoetigenMdh = vorraeteList.where((obj) => obj.benoetigtMdh == true).toList();
 
     setState(() => isLoading = false);
     }
@@ -59,7 +61,15 @@ Future deleteVorraete(id) async{
             ),
           ],
         ),
-      body: ListView.builder(
+      body: Column( children: [
+        if (vorrateListMitBenoetigenMdh.isNotEmpty) Card(
+           child: Text(
+            vorrateListMitBenoetigenMdh.length.toString()
+            + ' Items benötigen eine Mindesthaltbarkeit. Hier klicken um diese hinzuzufügen'),
+        ),
+        ListView.builder(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
         itemCount: vorraeteList.length,
         itemBuilder: (context, index){
           return Card(
@@ -89,7 +99,7 @@ Future deleteVorraete(id) async{
           );
         }
       ),
-
+      ]),
       persistentFooterButtons: [
         IconButton(
           icon: const Icon(Icons.add),

@@ -43,7 +43,7 @@ class _AddEditEinkaufslistePageState extends State<AddEditEinkaufslistePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Vorratsgegenstand hinzufügen"),
+        title: const Text("Einkaufsliste hinzufügen"),
       ),
       body: Center (
         child: 

@@ -60,7 +60,7 @@ Future addVorraete(String name, String? menge) async {
     Widget build(BuildContext context) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text("Vorratsliste"),
+          title: const Text("Einkaufsliste"),
           actions: [
             IconButton(
               icon: const Icon(Icons.home),

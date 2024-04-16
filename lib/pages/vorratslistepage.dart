@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lebensmittelplaner/database/databasevorraete.dart';
 import 'package:lebensmittelplaner/model/vorraete.dart';
+import 'package:lebensmittelplaner/pages/MdhHinzufuegenPage.dart';
 import 'package:lebensmittelplaner/pages/addeditvorratslistepage.dart';
 import 'package:intl/intl.dart'; // for date format
 import 'dart:developer';
@@ -63,9 +64,19 @@ Future deleteVorraete(id) async{
         ),
       body: Column( children: [
         if (vorrateListMitBenoetigenMdh.isNotEmpty) Card(
-           child: Text(
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MdhHinzufuegenPage(mdhHinzufuegenListe: vorrateListMitBenoetigenMdh)),
+              ).then((_) {
+                refreshVorraete();
+              });
+            },
+            child: Text(
             vorrateListMitBenoetigenMdh.length.toString()
             + ' Items benötigen eine Mindesthaltbarkeit. Hier klicken um diese hinzuzufügen'),
+          )
         ),
         ListView.builder(
         scrollDirection: Axis.vertical,

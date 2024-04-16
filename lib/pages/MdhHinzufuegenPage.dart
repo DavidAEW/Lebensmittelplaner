@@ -16,7 +16,7 @@ class MdhHinzufuegenPage extends StatefulWidget {
 
 class _MdhHinzufuegenPageState extends State<MdhHinzufuegenPage> {
   DateTime heutigesDatum = DateTime.now();
-  late DateTime ausgewaehlteDateTime;
+  DateTime? ausgewaehlteDateTime;
 
       Future EditVorraete(int? id, String name, DateTime? mdh, String? menge) async {
 

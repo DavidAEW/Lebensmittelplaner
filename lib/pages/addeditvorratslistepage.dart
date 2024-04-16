@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lebensmittelplaner/database/databasevorraete.dart';
 import 'package:lebensmittelplaner/model/vorraete.dart';
+import 'package:flutter/cupertino.dart';
 
 class AddEditVorratslistePage extends StatefulWidget {
 
@@ -25,21 +26,10 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
     nameController = TextEditingController(text: widget.vorraete?.name ?? '');
     mengeController = TextEditingController(text: widget.vorraete?.menge ?? '');
     gewahltesDatum = widget.vorraete?.mdh ?? null;
+    heutigesDatum = widget.vorraete?.mdh ?? heutigesDatum;
     benoetigtMdh = widget.vorraete?.benoetigtMdh ?? false;
   }
 
-    Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: heutigesDatum,
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
-      if (picked != null && picked != gewahltesDatum) {
-        setState(() {
-          gewahltesDatum = picked;
-        });
-      }
-    } 
     Future addEditVorraete(int? id, String name, DateTime? mdh, String? menge, bool benoetigtMdh) async {
 
       final vorraete = Vorraete(
@@ -80,18 +70,27 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
                   hintText: 'Menge',
                 )
               ),
-        
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text("${gewahltesDatum?.toLocal()}".split(' ')[0]),
-                  const SizedBox(height: 20.0,),
-                  ElevatedButton(
-                    onPressed: () => _selectDate(context),
-                    child: const Text('Select date'),
-                  ),
-                ],
+              SizedBox(
+                height: 200,
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: heutigesDatum,
+                  onDateTimeChanged: (DateTime newDateTime) {
+                    gewahltesDatum = newDateTime;
+                  },
+                ),
               ),
+              // Column(
+              //   mainAxisSize: MainAxisSize.min,
+              //   children: <Widget>[
+              //     Text("${gewahltesDatum?.toLocal()}".split(' ')[0]),
+              //     const SizedBox(height: 20.0,),
+              //     ElevatedButton(
+              //       onPressed: () => _selectDate(context),
+              //       child: const Text('Select date'),
+              //     ),
+              //   ],
+              // ),
               TextButton(
                 onPressed: () async {
                   addEditVorraete(

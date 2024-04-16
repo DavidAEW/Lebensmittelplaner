@@ -62,7 +62,8 @@ Future deleteVorraete(id) async{
             ),
           ],
         ),
-      body: Column( children: [
+      body:
+        Column( children: [
         if (vorrateListMitBenoetigenMdh.isNotEmpty) Card(
           child: InkWell(
             onTap: () {
@@ -78,6 +79,7 @@ Future deleteVorraete(id) async{
             + ' Items benötigen eine Mindesthaltbarkeit. Hier klicken um diese hinzuzufügen'),
           )
         ),
+        Flexible(child:
         ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
@@ -109,7 +111,7 @@ Future deleteVorraete(id) async{
             ),
           );
         }
-      ),
+      ),),
       ]),
       persistentFooterButtons: [
         IconButton(

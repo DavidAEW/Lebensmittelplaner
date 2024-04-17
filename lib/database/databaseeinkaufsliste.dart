@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/services.dart';
 import 'package:lebensmittelplaner/model/einkaufsliste.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -27,9 +26,9 @@ class einkaufslisteDB {
 
   Future _createDB(Database db, int version) async {
 
-    final idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    final textType = 'TEXT NOT NULL';
-    final textTypeNull = 'TEXT';
+    const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    const textType = 'TEXT NOT NULL';
+    const textTypeNull = 'TEXT';
 
     await db.execute('''CREATE TABLE $tableEinkaufsliste (
       ${EinkaufslisteFields.id} $idType,

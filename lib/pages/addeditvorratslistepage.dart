@@ -7,7 +7,7 @@ class AddEditVorratslistePage extends StatefulWidget {
 
   final Vorraete? vorraete;
   
-  const AddEditVorratslistePage({Key? key, this.vorraete}) : super(key: key);
+  const AddEditVorratslistePage({super.key, this.vorraete});
 
   @override
   State<AddEditVorratslistePage> createState() => _AddEditVorratslistePageState();
@@ -25,7 +25,7 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
     super.initState();
     nameController = TextEditingController(text: widget.vorraete?.name ?? '');
     mengeController = TextEditingController(text: widget.vorraete?.menge ?? '');
-    gewahltesDatum = widget.vorraete?.mdh ?? null;
+    gewahltesDatum = widget.vorraete?.mdh;
     heutigesDatum = widget.vorraete?.mdh ?? heutigesDatum;
     benoetigtMdh = widget.vorraete?.benoetigtMdh ?? false;
   }
@@ -59,14 +59,14 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
             children: [
               TextField(
                 controller: nameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Name',
                 )
               ),
 
               TextField(
                 controller: mengeController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Menge',
                 )
               ),
@@ -102,7 +102,7 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
                   Navigator.of(context).pop();
                 }, 
                 child: 
-                  Text('Hinzufügen'),
+                  const Text('Hinzufügen'),
               )
             ],
         )

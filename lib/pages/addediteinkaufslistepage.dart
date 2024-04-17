@@ -3,19 +3,17 @@ import 'package:lebensmittelplaner/database/databaseeinkaufsliste.dart';
 import 'package:lebensmittelplaner/model/einkaufsliste.dart';
 
 class AddEditEinkaufslistePage extends StatefulWidget {
-
   final Einkaufsliste? einkaufsliste;
-  
-  const AddEditEinkaufslistePage({Key? key, this.einkaufsliste}) : super(key: key);
+
+  const AddEditEinkaufslistePage({super.key, this.einkaufsliste});
 
   @override
   State<AddEditEinkaufslistePage> createState() => _AddEditEinkaufslistePageState();
 }
 
 class _AddEditEinkaufslistePageState extends State<AddEditEinkaufslistePage> {
-
-    late TextEditingController nameController;
-    late TextEditingController mengeController;
+  late TextEditingController nameController;
+  late TextEditingController mengeController;
 
   @override
   void initState() {
@@ -24,20 +22,19 @@ class _AddEditEinkaufslistePageState extends State<AddEditEinkaufslistePage> {
     mengeController = TextEditingController(text: widget.einkaufsliste?.menge ?? '');
   }
 
-    Future addEinkaufsliste(int? id, String name, String menge) async {
+  Future<void> addEinkaufsliste(int? id, String name, String menge) async {
+    final einkaufsliste = Einkaufsliste(
+      id: id,
+      name: name,
+      menge: menge,
+    );
 
-      final einkaufsliste = Einkaufsliste(
-        id: id,
-        name: name,
-        menge: menge,
-      );
-
-      if(einkaufsliste.id == null){
-        await einkaufslisteDB.instance.create(einkaufsliste);
-      } else{
-        await einkaufslisteDB.instance.update(einkaufsliste);
-      }
+    if (einkaufsliste.id == null) {
+      await einkaufslisteDB.instance.create(einkaufsliste);
+    } else {
+      await einkaufslisteDB.instance.update(einkaufsliste);
     }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,33 +43,32 @@ class _AddEditEinkaufslistePageState extends State<AddEditEinkaufslistePage> {
         title: const Text("Einkaufsliste hinzufügen"),
       ),
       body: Center (
-        child: 
-          Column(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  hintText: 'Name',
-                )
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    hintText: 'Name',
+                  )
               ),
-
+              const SizedBox(height: 6),
               TextField(
-                controller: mengeController,
-                decoration: InputDecoration(
-                  hintText: 'Menge',
-                )
+                  controller: mengeController,
+                  decoration: const InputDecoration(
+                    hintText: 'Menge',
+                  )
               ),
-
-              TextButton(
+              const SizedBox(height: 10),
+              ElevatedButton(
                 onPressed: () async {
                   addEinkaufsliste(widget.einkaufsliste?.id, nameController.text, mengeController.text);
                   Navigator.of(context).pop();
-                }, 
-                child: 
-                  Text('Hinzufügen'),
+                },
+                child: const Text('Hinzufügen'),
               )
             ],
-        )
+          )
       ),
     );
   }

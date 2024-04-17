@@ -1,4 +1,4 @@
-final String tableVorraete = 'vorraete';
+const String tableVorraete = 'vorraete';
 
 class VorraeteFields {
 
@@ -6,10 +6,10 @@ class VorraeteFields {
     id, name, mdh, menge, benoetigtMdh
   ];
 
-  static final String id = '_id';
-  static final String name = 'name';
-  static final String mdh = 'mdh';
-  static final String menge = 'menge';
+  static const String id = '_id';
+  static const String name = 'name';
+  static const String mdh = 'mdh';
+  static const String menge = 'menge';
   static const String benoetigtMdh = 'benoetigtMdh';
 }
 
@@ -48,7 +48,7 @@ class Vorraete {
   Map<String, Object?> toJson() => {
     VorraeteFields.id: id,
     VorraeteFields.name: name,
-    VorraeteFields.mdh: mdh != null ? mdh!.toIso8601String() : null,
+    VorraeteFields.mdh: mdh?.toIso8601String(),
     VorraeteFields.menge: menge,
     VorraeteFields.benoetigtMdh: benoetigtMdh
   };

@@ -8,7 +8,7 @@ class MdhHinzufuegenPage extends StatefulWidget {
 
   final List<Vorraete> mdhHinzufuegenListe;
   
-  const MdhHinzufuegenPage({Key? key, required this.mdhHinzufuegenListe}) : super(key: key);
+  const MdhHinzufuegenPage({super.key, required this.mdhHinzufuegenListe});
 
   @override
   State<MdhHinzufuegenPage> createState() => _MdhHinzufuegenPageState();
@@ -60,7 +60,7 @@ class _MdhHinzufuegenPageState extends State<MdhHinzufuegenPage> {
       ),
       persistentFooterButtons: [
         TextButton(
-          child: Text("Nächster Gegenstand"),
+          child: const Text("Nächster Gegenstand"),
           onPressed: () {
             EditVorraete(
               widget.mdhHinzufuegenListe[0].id,

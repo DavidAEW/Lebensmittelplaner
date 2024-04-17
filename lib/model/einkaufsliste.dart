@@ -1,4 +1,4 @@
-final String tableEinkaufsliste = 'einkaufsliste';
+const String tableEinkaufsliste = 'einkaufsliste';
 
 class EinkaufslisteFields {
 
@@ -6,9 +6,9 @@ class EinkaufslisteFields {
     id, name, menge
   ];
 
-  static final String id = '_id';
-  static final String name = 'name';
-  static final String menge = 'menge';
+  static const String id = '_id';
+  static const String name = 'name';
+  static const String menge = 'menge';
 }
 
 class Einkaufsliste {

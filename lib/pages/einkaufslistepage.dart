@@ -58,7 +58,16 @@ class _EinkaufslistePageState extends State<EinkaufslistePage> {
         ],
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+        child: CircularProgressIndicator(),
+      )
+          : einkaufslisteList.isEmpty
+          ? Center(
+        child: Text(
+          "Keine Waren in der Einkaufsliste",
+          style: TextStyle(fontSize: 18.0),
+        ),
+      )
           : ListView.builder(
         itemCount: einkaufslisteList.length,
         itemBuilder: (context, index) {

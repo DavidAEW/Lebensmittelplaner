@@ -13,9 +13,15 @@ class AddEditEinkaufslistePage extends StatefulWidget {
 }
 
 class _AddEditEinkaufslistePageState extends State<AddEditEinkaufslistePage> {
+<<<<<<< Updated upstream
 
     late TextEditingController nameController;
     late TextEditingController mengeController;
+=======
+  late TextEditingController nameController;
+  late TextEditingController mengeController;
+  String? mengeError;
+>>>>>>> Stashed changes
 
   @override
   void initState() {
@@ -24,6 +30,7 @@ class _AddEditEinkaufslistePageState extends State<AddEditEinkaufslistePage> {
     mengeController = TextEditingController(text: widget.einkaufsliste?.menge ?? '');
   }
 
+<<<<<<< Updated upstream
     Future addEinkaufsliste(int? id, String name, String menge) async {
 
       final einkaufsliste = Einkaufsliste(
@@ -31,6 +38,20 @@ class _AddEditEinkaufslistePageState extends State<AddEditEinkaufslistePage> {
         name: name,
         menge: menge,
       );
+=======
+  Future<void> addEinkaufsliste(int? id, String name, String menge) async {
+    if (!isNumeric(menge)) {
+      setState(() {
+        mengeError = 'Die Menge muss eine Zahl sein.';
+      });
+      return;
+    }
+    final einkaufsliste = Einkaufsliste(
+      id: id,
+      name: name,
+      menge: menge,
+    );
+>>>>>>> Stashed changes
 
       if(einkaufsliste.id == null){
         await einkaufslisteDB.instance.create(einkaufsliste);
@@ -45,6 +66,7 @@ class _AddEditEinkaufslistePageState extends State<AddEditEinkaufslistePage> {
       appBar: AppBar(
         title: const Text("Einkaufsliste hinzufügen"),
       ),
+<<<<<<< Updated upstream
       body: Center (
         child: 
           Column(
@@ -73,6 +95,42 @@ class _AddEditEinkaufslistePageState extends State<AddEditEinkaufslistePage> {
               )
             ],
         )
+=======
+      body: Center(
+        child: Column(
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: InputDecoration(
+                hintText: 'Name',
+              ),
+            ),
+            TextField(
+              controller: mengeController,
+              decoration: InputDecoration(
+                hintText: 'Menge',
+                errorText: mengeError,
+              ),
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+            ),
+            TextButton(
+              onPressed: () async {
+                // Vor dem Hinzufügen Fehlermeldung zurücksetzen
+                setState(() {
+                  mengeError = null;
+                });
+                // Einkaufsliste hinzufügen
+                await addEinkaufsliste(
+                  widget.einkaufsliste?.id,
+                  nameController.text,
+                  mengeController.text,
+                );
+              },
+              child: Text('Hinzufügen'),
+            )
+          ],
+        ),
+>>>>>>> Stashed changes
       ),
     );
   }

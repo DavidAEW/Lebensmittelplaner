@@ -14,6 +14,7 @@ class AddEditEinkaufslistePage extends StatefulWidget {
 class _AddEditEinkaufslistePageState extends State<AddEditEinkaufslistePage> {
   late TextEditingController nameController;
   late TextEditingController mengeController;
+  String? nameError;
   String? mengeError;
 
   @override
@@ -24,12 +25,20 @@ class _AddEditEinkaufslistePageState extends State<AddEditEinkaufslistePage> {
   }
 
   Future<void> addEinkaufsliste(int? id, String name, String menge) async {
+    if (name.isEmpty || menge.isEmpty) {
+      setState(() {
+        nameError = name.isEmpty ? 'Das Feld "Name" darf nicht leer sein.' : null;
+        mengeError = menge.isEmpty ? 'Das Feld "Menge" darf nicht leer sein.' : null;
+      });
+      return;
+    }
     if (!isNumeric(menge)) {
       setState(() {
         mengeError = 'Die Menge muss eine Zahl sein.';
       });
       return;
     }
+
     final einkaufsliste = Einkaufsliste(
       id: id,
       name: name,
@@ -54,43 +63,67 @@ class _AddEditEinkaufslistePageState extends State<AddEditEinkaufslistePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Einkaufsliste hinzufügen"),
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(
-                hintText: 'Name',
+    return WillPopScope(
+      onWillPop: () async {
+        // Vor dem Schließen des Bildschirms eine Bestätigung anzeigen
+        return await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Vorgang abbrechen'),
+            content: Text('Möchten Sie den Vorgang wirklich abbrechen? Ihre Änderungen gehen dabei verloren.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text('Zurück'),
               ),
-            ),
-            TextField(
-              controller: mengeController,
-              decoration: InputDecoration(
-                hintText: 'Menge',
-                errorText: mengeError,
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text('Abbrechen'),
               ),
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-            ),
-            TextButton(
-              onPressed: () async {
-                // Vor dem Hinzufügen Fehlermeldung zurücksetzen
-                setState(() {
-                  mengeError = null;
-                });
-                // Einkaufsliste hinzufügen
-                await addEinkaufsliste(
-                  widget.einkaufsliste?.id,
-                  nameController.text,
-                  mengeController.text,
-                );
-              },
-              child: Text('Hinzufügen'),
-            )
-          ],
+            ],
+          ),
+        ) ?? false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Einkaufsliste hinzufügen"),
+        ),
+        body: Center(
+          child: Column(
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  hintText: 'Name',
+                  errorText: nameError,
+                ),
+              ),
+              TextField(
+                controller: mengeController,
+                decoration: InputDecoration(
+                  hintText: 'Menge',
+                  errorText: mengeError,
+                ),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+              ),
+              TextButton(
+                onPressed: () async {
+                  // Vor dem Hinzufügen Fehlermeldung zurücksetzen
+                  setState(() {
+                    nameError = null;
+                    mengeError = null;
+                  });
+                  // Einkaufsliste hinzufügen
+                  await addEinkaufsliste(
+                    widget.einkaufsliste?.id,
+                    nameController.text,
+                    mengeController.text,
+                  );
+                },
+                child: Text('Hinzufügen'),
+              ),
+            ],
+          ),
         ),
       ),
     );

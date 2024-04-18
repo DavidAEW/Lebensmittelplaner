@@ -6,7 +6,7 @@ import 'package:lebensmittelplaner/model/vorraete.dart';
 import 'package:lebensmittelplaner/pages/addediteinkaufslistepage.dart';
 
 class EinkaufslistePage extends StatefulWidget {
-  const EinkaufslistePage({Key? key}) : super(key: key);
+  const EinkaufslistePage({Key? key});
 
   @override
   State<EinkaufslistePage> createState() => _EinkaufslistePageState();
@@ -25,21 +25,10 @@ class _EinkaufslistePageState extends State<EinkaufslistePage> {
 
   Future<void> refreshEinkaufsliste() async {
     setState(() => isLoading = true);
+
     einkaufslisteList = await einkaufslisteDB.instance.read();
+
     setState(() => isLoading = false);
-  }
-
-  Future<void> deleteEinkaufsliste(int id) async {
-    await einkaufslisteDB.instance.delete(id);
-  }
-
-  Future<void> addVorraete(String name, String? menge) async {
-    final vorraete = Vorraete(
-      name: name,
-      menge: menge,
-      benoetigtMdh: true,
-    );
-    await meineDatenbank.instance.create(vorraete);
   }
 
   @override
@@ -47,7 +36,6 @@ class _EinkaufslistePageState extends State<EinkaufslistePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Einkaufsliste"),
-        leading: Image.asset('assets/Logo.jpg'), // Hier füge ich das Logo hinzu
         actions: [
           IconButton(
             icon: const Icon(Icons.home),
@@ -57,58 +45,63 @@ class _EinkaufslistePageState extends State<EinkaufslistePage> {
           ),
         ],
       ),
-      body: isLoading
-          ? Center(
-        child: CircularProgressIndicator(),
-      )
-          : einkaufslisteList.isEmpty
-          ? Center(
-        child: Text(
-          "Keine Waren in der Einkaufsliste",
-          style: TextStyle(fontSize: 18.0),
-        ),
-      )
-          : ListView.builder(
-        itemCount: einkaufslisteList.length,
-        itemBuilder: (context, index) {
-          return Card(
-            child: ListTile(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddEditEinkaufslistePage(einkaufsliste: einkaufslisteList[index]),
+      body: Column(
+        children: [
+          if (isLoading)
+            CircularProgressIndicator(),
+          // Ladebalken während die Einkaufsliste geladen wird
+          Expanded(
+            child: ListView.builder(
+              itemCount: einkaufslisteList.length,
+              itemBuilder: (context, index) {
+                return Card(
+                  child: ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) =>
+                            AddEditEinkaufslistePage(
+                                einkaufsliste: einkaufslisteList[index])),
+                      ).then((_) {
+                        refreshEinkaufsliste();
+                      });
+                    },
+                    title: Column(
+                      children: [
+                        Text(einkaufslisteList[index].name),
+                        Text(einkaufslisteList[index].menge ?? ''),
+                      ],
+                    ),
+                    leading: IconButton(
+                      onPressed: () async {
+                        await einkaufslisteDB.instance.delete(
+                            einkaufslisteList[index].id!);
+                        await meineDatenbank.instance.create(Vorraete(
+                          name: einkaufslisteList[index].name,
+                          menge: einkaufslisteList[index].menge,
+                          benoetigtMdh: true,
+                        ));
+                        refreshEinkaufsliste();
+                      },
+                      icon: const Icon(Icons.check),
+                    ),
+                    trailing: showDeleteButton
+                        ? IconButton(
+                      onPressed: () async {
+                        await einkaufslisteDB.instance.delete(
+                            einkaufslisteList[index].id!);
+                        refreshEinkaufsliste();
+                      },
+                      icon: const Icon(Icons.delete),
+                    )
+                        : null,
+
                   ),
-                ).then((_) {
-                  refreshEinkaufsliste();
-                });
+                );
               },
-              title: Column(
-                children: [
-                  Text(einkaufslisteList[index].name),
-                  Text(einkaufslisteList[index].menge as String),
-                ],
-              ),
-              leading: IconButton(
-                onPressed: () async {
-                  await deleteEinkaufsliste(einkaufslisteList[index].id!);
-                  addVorraete(einkaufslisteList[index].name, einkaufslisteList[index].menge);
-                  refreshEinkaufsliste();
-                },
-                icon: const Icon(Icons.check),
-              ),
-              trailing: showDeleteButton
-                  ? IconButton(
-                onPressed: () async {
-                  await deleteEinkaufsliste(einkaufslisteList[index].id!);
-                  refreshEinkaufsliste();
-                },
-                icon: const Icon(Icons.delete),
-              )
-                  : null,
             ),
-          );
-        },
+          ),
+        ],
       ),
       persistentFooterButtons: [
         IconButton(
@@ -116,7 +109,8 @@ class _EinkaufslistePageState extends State<EinkaufslistePage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const AddEditEinkaufslistePage()),
+              MaterialPageRoute(
+                  builder: (context) => const AddEditEinkaufslistePage()),
             ).then((_) {
               refreshEinkaufsliste();
             });

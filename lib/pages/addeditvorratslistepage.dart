@@ -6,19 +6,19 @@ import 'package:flutter/cupertino.dart';
 class AddEditVorratslistePage extends StatefulWidget {
 
   final Vorraete? vorraete;
-  
-  const AddEditVorratslistePage({super.key, this.vorraete});
+
+  const AddEditVorratslistePage({Key? key, this.vorraete}) : super(key: key);
 
   @override
   State<AddEditVorratslistePage> createState() => _AddEditVorratslistePageState();
 }
 
 class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
-    DateTime? gewahltesDatum;
-    late bool benoetigtMdh;
-    DateTime heutigesDatum = DateTime.now();
-    late TextEditingController nameController;
-    late TextEditingController mengeController;
+  DateTime? gewahltesDatum;
+  late bool benoetigtMdh;
+  DateTime heutigesDatum = DateTime.now();
+  late TextEditingController nameController;
+  late TextEditingController mengeController;
 
   @override
   void initState() {
@@ -30,45 +30,70 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
     benoetigtMdh = widget.vorraete?.benoetigtMdh ?? false;
   }
 
-    Future addEditVorraete(int? id, String name, DateTime? mdh, String? menge, bool benoetigtMdh) async {
+  Future<void> addEditVorraete(int? id, String name, DateTime? mdh, String? menge, bool benoetigtMdh) async {
+    final vorraete = Vorraete(
+      id: id,
+      name: name,
+      mdh: mdh,
+      menge: menge,
+      benoetigtMdh: benoetigtMdh,
+    );
 
-      final vorraete = Vorraete(
-        id: id,
-        name: name,
-        mdh: mdh,
-        menge: menge,
-        benoetigtMdh: benoetigtMdh,
-      );
-
-      if(vorraete.id == null){
-        await meineDatenbank.instance.create(vorraete);
-      } else{
-        await meineDatenbank.instance.update(vorraete);
-      }
+    if(vorraete.id == null){
+      await meineDatenbank.instance.create(vorraete);
+    } else{
+      await meineDatenbank.instance.update(vorraete);
     }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Vorratsgegenstand hinzufügen"),
-      ),
-      body: Center (
-        child: 
-          Column(
+    return WillPopScope(
+      onWillPop: () async {
+        // Dialog für den Abbruch anzeigen
+        final bool? result = await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Vorgang abbrechen'),
+              content: Text('Möchten Sie den Vorgang wirklich abbrechen? Ihre Änderungen gehen dabei verloren.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                  child: Text('Zurück'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                  child: Text('Abbrechen'),
+                ),
+              ],
+            );
+          },
+        );
+        return result ?? false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Vorratsgegenstand hinzufügen"),
+        ),
+        body: Center (
+          child: Column(
             children: [
               TextField(
                 controller: nameController,
                 decoration: const InputDecoration(
                   hintText: 'Name',
-                )
+                ),
               ),
-
               TextField(
                 controller: mengeController,
                 decoration: const InputDecoration(
                   hintText: 'Menge',
-                )
+                ),
               ),
               SizedBox(
                 height: 200,
@@ -80,32 +105,22 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
                   },
                 ),
               ),
-              // Column(
-              //   mainAxisSize: MainAxisSize.min,
-              //   children: <Widget>[
-              //     Text("${gewahltesDatum?.toLocal()}".split(' ')[0]),
-              //     const SizedBox(height: 20.0,),
-              //     ElevatedButton(
-              //       onPressed: () => _selectDate(context),
-              //       child: const Text('Select date'),
-              //     ),
-              //   ],
-              // ),
               TextButton(
                 onPressed: () async {
                   addEditVorraete(
-                    widget.vorraete?.id, 
-                    nameController.text, 
-                    gewahltesDatum, 
-                    mengeController.text, 
-                  benoetigtMdh);
+                    widget.vorraete?.id,
+                    nameController.text,
+                    gewahltesDatum,
+                    mengeController.text,
+                    benoetigtMdh,
+                  );
                   Navigator.of(context).pop();
-                }, 
-                child: 
-                  const Text('Hinzufügen'),
+                },
+                child: const Text('Hinzufügen'),
               )
             ],
-        )
+          ),
+        ),
       ),
     );
   }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lebensmittelplaner/database/databaseeinkaufsliste.dart';
-import 'package:lebensmittelplaner/database/databasevorraete.dart';
+import 'package:lebensmittelplaner/database/database_einkaufsliste.dart';
+import 'package:lebensmittelplaner/database/database_vorratsliste.dart';
 import 'package:lebensmittelplaner/model/einkaufsliste.dart';
 import 'package:lebensmittelplaner/model/vorraete.dart';
-import 'package:lebensmittelplaner/pages/addediteinkaufslistepage.dart';
+import 'package:lebensmittelplaner/pages/bearbeiten_einkaufsliste_page.dart';
 
 class EinkaufslistePage extends StatefulWidget {
     const EinkaufslistePage({super.key});
@@ -14,46 +14,43 @@ class EinkaufslistePage extends StatefulWidget {
 }
 
 class _EinkaufslistePageState extends State<EinkaufslistePage> {
-  late List<Einkaufsliste> einkaufslisteList = [];
+  late List<EinkaufslisteItem> einkaufslisteItemList = [];
   bool isLoading = false;
   bool showdeleteButton = false;
 
-    @override 
+//Initalisierungmethode beim Rendern der Page
+  @override 
   void initState() {
     super.initState();
 
-    refreshEinkaufsliste();
+    aktualisiereEinkaufsliste();
   }
 
-  //   @override
-  // void dispose() {
-  //   einkaufslisteDB.instance.close();
-
-  //   super.dispose();
-  // }
-
-    Future refreshEinkaufsliste() async {
+  //Einkaufsliste wird geladen/neugeladen
+  Future aktualisiereEinkaufsliste() async {
     setState(() => isLoading = true);
 
-    einkaufslisteList = await einkaufslisteDB.instance.read();
+    einkaufslisteItemList = await EinkaufslisteDB.instance.read();
 
     setState(() => isLoading = false);
  
   }
 
-Future deleteEinkaufsliste(id) async{
-  await einkaufslisteDB.instance.delete(id);
+//Löscht einen Gegenstand persistent aus der Einkaufsliste
+Future loeschenEinkaufslisteItem(id) async{
+  await EinkaufslisteDB.instance.delete(id);
 }
 
-Future addVorraete(String name, String? menge) async {
+//Fügt einen Gegenstand in die Vorratsliste hinzu
+Future hinzufuegenVorratsItem(String name, String? menge) async {
 
-  final vorraete = Vorraete(
+  final vorraete = VorratsItem(
     name: name,
     menge: menge,
     benoetigtMdh: true,
   );
 
-  await meineDatenbank.instance.create(vorraete);
+  await VorraeteDB.instance.create(vorraete);
 }
 
       @override
@@ -64,6 +61,7 @@ Future addVorraete(String name, String? menge) async {
           actions: [
             IconButton(
               icon: const Icon(Icons.home),
+              key: const Key('Go to vorratsliste'),
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/Vorratsliste');
               },
@@ -71,37 +69,39 @@ Future addVorraete(String name, String? menge) async {
           ],
         ),
       body: ListView.builder(
-        itemCount: einkaufslisteList.length,
+        itemCount: einkaufslisteItemList.length,
         itemBuilder: (context, index){
           return Card(
             child: ListTile(
               onTap: () {
                 Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AddEditEinkaufslistePage(einkaufsliste: einkaufslisteList[index])),
+                MaterialPageRoute(builder: (context) => 
+                AddEditEinkaufslistePage(einkaufsliste: einkaufslisteItemList[index])),
               ).then((_) {
-                refreshEinkaufsliste();
+                aktualisiereEinkaufsliste();
                 });
               },
               title: Column( children: [
-                Text(einkaufslisteList[index].name),
-                Text(einkaufslisteList[index].menge as String),
+                Text(einkaufslisteItemList[index].name),
+                Text(einkaufslisteItemList[index].menge as String),
               ]),
               leading:
               IconButton(
                 onPressed: () async {
-                  await deleteEinkaufsliste(einkaufslisteList[index].id);
-                  addVorraete(einkaufslisteList[index].name, einkaufslisteList[index].menge);
-                  refreshEinkaufsliste();
+                  await loeschenEinkaufslisteItem(einkaufslisteItemList[index].id);
+                  hinzufuegenVorratsItem(einkaufslisteItemList[index].name, einkaufslisteItemList[index].menge);
+                  aktualisiereEinkaufsliste();
                 },
+                key: const Key('icon check'),
                 icon: const Icon(Icons.check),
               ),
 
               trailing: 
               showdeleteButton ? IconButton(
                 onPressed: () async {
-                  await deleteEinkaufsliste(einkaufslisteList[index].id);
-                  refreshEinkaufsliste();
+                  await loeschenEinkaufslisteItem(einkaufslisteItemList[index].id);
+                  aktualisiereEinkaufsliste();
                 },
                 icon: const Icon(Icons.delete),
               ) : null,
@@ -118,12 +118,13 @@ Future addVorraete(String name, String? menge) async {
               context,
               MaterialPageRoute(builder: (context) => const AddEditEinkaufslistePage()),
             ).then((_) {
-              refreshEinkaufsliste();
+              aktualisiereEinkaufsliste();
             });
           },
         ),
         IconButton(
           icon: const Icon(Icons.remove),
+          key: const Key('Remove Button'),
           onPressed: () async {
             if(showdeleteButton){
               showdeleteButton = false;

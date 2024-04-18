@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lebensmittelplaner/database/databasevorraete.dart';
+import 'package:lebensmittelplaner/database/database_vorratsliste.dart';
 import 'package:lebensmittelplaner/model/vorraete.dart';
-import 'package:lebensmittelplaner/pages/MdhHinzufuegenPage.dart';
-import 'package:lebensmittelplaner/pages/addeditvorratslistepage.dart';
+import 'package:lebensmittelplaner/pages/mdh_hinzufuegen_page.dart';
+import 'package:lebensmittelplaner/pages/bearbeiten_vorratsliste_page.dart';
 import 'package:intl/intl.dart'; // for date format
-import 'dart:developer';
 
 class VorratslistePage extends StatefulWidget {
     const VorratslistePage({super.key});
@@ -15,37 +14,31 @@ class VorratslistePage extends StatefulWidget {
 }
 
 class _VorratslistePageState extends State<VorratslistePage> {
-  late List<Vorraete> vorraeteList = [];
-  late List<Vorraete> vorrateListMitBenoetigenMdh = [];
+  late List<VorratsItem> vorratsItemList = [];
+  late List<VorratsItem> vorrateListMitBenoetigenMdh = [];
   bool isLoading = false;
-  bool showdeleteButton = false;
+  bool showDeleteButton = false;
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-    @override 
+  //Initalisierungmethode beim Rendern der Page
+  @override 
   void initState() {
     super.initState();
 
-    refreshVorraete();
+    aktualisierenVorratsliste();
   }
-
-  //   @override
-  // void dispose() {
-  //   meineDatenbank.instance.close();
-
-  //   super.dispose();
-  // }
-
-    Future refreshVorraete() async {
+//Vorratsliste wird neugeladen
+    Future aktualisierenVorratsliste() async {
     setState(() => isLoading = true);
 
-    vorraeteList = await meineDatenbank.instance.read();
-    vorrateListMitBenoetigenMdh = vorraeteList.where((obj) => obj.benoetigtMdh == true).toList();
+    vorratsItemList = await VorraeteDB.instance.read();
+    vorrateListMitBenoetigenMdh = vorratsItemList.where((obj) => obj.benoetigtMdh == true).toList();
 
     setState(() => isLoading = false);
     }
 
-Future deleteVorraete(id) async{
-  await meineDatenbank.instance.delete(id);
+Future loescheVorratsitem(id) async{
+  await VorraeteDB.instance.delete(id);
 }
 
       @override
@@ -55,6 +48,7 @@ Future deleteVorraete(id) async{
           title: const Text("Vorratsliste"),
           actions: [
             IconButton(
+              key: const Key("Go to shoppinglist"),
               icon: const Icon(Icons.shopping_cart),
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/Einkaufsliste');
@@ -71,41 +65,41 @@ Future deleteVorraete(id) async{
               context,
               MaterialPageRoute(builder: (context) => MdhHinzufuegenPage(mdhHinzufuegenListe: vorrateListMitBenoetigenMdh)),
               ).then((_) {
-                refreshVorraete();
+                aktualisierenVorratsliste();
               });
             },
             child: Text(
-            vorrateListMitBenoetigenMdh.length.toString()
-            + ' Items benötigen eine Mindesthaltbarkeit. Hier klicken um diese hinzuzufügen'),
+            '${vorrateListMitBenoetigenMdh.length} Items benötigen eine Mindesthaltbarkeit. Hier klicken um diese hinzuzufügen'),
           )
         ),
         Flexible(child:
         ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        itemCount: vorraeteList.length,
+        itemCount: vorratsItemList.length,
         itemBuilder: (context, index){
           return Card(
             child: ListTile(
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AddEditVorratslistePage(vorraete: vorraeteList[index])),
+                  MaterialPageRoute(builder: (context) => AddEditVorratslistePage(vorratsItem: vorratsItemList[index])),
                 ).then((_) {
-                  refreshVorraete();
+                  aktualisierenVorratsliste();
                 });
               },
               title: Column( children: [
-                Text(vorraeteList[index].name),
-                Text(vorraeteList[index].mdh != null ? formatter.format(vorraeteList[index].mdh!).toString() : ''), //Könnte Probleme machen das Ausrufezeichen!!
-                Text(vorraeteList[index].menge as String),
+                Text(vorratsItemList[index].name),
+                Text(vorratsItemList[index].mdh != null ? formatter.format(vorratsItemList[index].mdh!).toString() : ''), //Könnte Probleme machen das Ausrufezeichen!!
+                Text(vorratsItemList[index].menge as String),
               ]),
               trailing: 
-              showdeleteButton ? IconButton(
+              showDeleteButton ? IconButton(
                 onPressed: () async {
-                  await deleteVorraete(vorraeteList[index].id);
-                  refreshVorraete();
+                  await loescheVorratsitem(vorratsItemList[index].id);
+                  aktualisierenVorratsliste();
                 },
+                key: const Key('trashcan Icon'),
                 icon: const Icon(Icons.delete),
               ) : null,
             ),
@@ -121,17 +115,18 @@ Future deleteVorraete(id) async{
               context,
               MaterialPageRoute(builder: (context) => const AddEditVorratslistePage()),
             ).then((_) {
-              refreshVorraete();
+              aktualisierenVorratsliste();
             });
           },
         ),
         IconButton(
           icon: const Icon(Icons.remove),
+          key: const Key('Remove Button'),
           onPressed: () async {
-            if(showdeleteButton){
-              showdeleteButton = false;
+            if(showDeleteButton){
+              showDeleteButton = false;
             } else {
-              showdeleteButton = true;
+              showDeleteButton = true;
             }
             setState(() {
             

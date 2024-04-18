@@ -1,43 +1,48 @@
-final String tableEinkaufsliste = 'einkaufsliste';
+//Name des Datenbankschemas
+const String tableEinkaufsliste = 'einkaufsliste';
 
-class EinkaufslisteFields {
+//Klasse um Strings zu erstellen für Datenbank Queries
+class EinkaufslisteItemFields {
 
   static final List<String> values = [
     id, name, menge
   ];
 
-  static final String id = '_id';
-  static final String name = 'name';
-  static final String menge = 'menge';
+  static const String id = '_id';
+  static const String name = 'name';
+  static const String menge = 'menge';
 }
 
-class Einkaufsliste {
+class EinkaufslisteItem {
   final int? id;
   final String name;
   final String? menge;
 
-  const Einkaufsliste({this.id, required this.name, this.menge});
+  const EinkaufslisteItem({this.id, required this.name, this.menge});
 
-  Einkaufsliste copy({
+//Methode um Kopie einer Instanz zu erstellen und zurückzugeben
+  EinkaufslisteItem copy({
     int? id,
     String? name,
     String? menge
   }) =>
-  Einkaufsliste(
+  EinkaufslisteItem(
     id: id ?? this.id,
     name: name ?? this.name,
     menge: menge ?? this.menge
     );
   
-  static Einkaufsliste fromJson(Map<String, Object?> json) => Einkaufsliste(
-    id: json[EinkaufslisteFields.id] as int?,
-    name: json[EinkaufslisteFields.name] as String,
-    menge: json[EinkaufslisteFields.menge] as String?
+  //Wandelt Einträge aus der SQFlite Datenbank, welche durch reaf geholt werden, von Json in ein Dart Objekt um.
+  static EinkaufslisteItem fromJson(Map<String, Object?> json) => EinkaufslisteItem(
+    id: json[EinkaufslisteItemFields.id] as int?,
+    name: json[EinkaufslisteItemFields.name] as String,
+    menge: json[EinkaufslisteItemFields.menge] as String?
   );
 
+//Wandelt Dart Objekte in Json-Format um für die SQFLite Datenbank
   Map<String, Object?> toJson() => {
-    EinkaufslisteFields.id: id,
-    EinkaufslisteFields.name: name,
-    EinkaufslisteFields.menge: menge
+    EinkaufslisteItemFields.id: id,
+    EinkaufslisteItemFields.name: name,
+    EinkaufslisteItemFields.menge: menge
   };
 }

@@ -1,16 +1,17 @@
 import 'dart:async';
-import 'package:flutter/services.dart';
 import 'package:lebensmittelplaner/model/einkaufsliste.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-class einkaufslisteDB {
-  static final einkaufslisteDB instance = einkaufslisteDB._init();
-
+class EinkaufslisteDB {
+  static final EinkaufslisteDB instance = EinkaufslisteDB._init();
   static Database? _database;
 
-  einkaufslisteDB._init();
+  EinkaufslisteDB._init();
 
+//Erstellt Database Instanz wenn noch keine exisitert 
+//und gibt Database Instanz zurück, wenn beireits eine existiert
   Future<Database> get database async {
     if(_database != null) return _database!;
 
@@ -18,6 +19,8 @@ class einkaufslisteDB {
     return _database!;
   }
 
+//Erstellt Datenbankschema, wenn noch keins unter dem Namen exisitert
+// und gibt Datenbankschema zurück, wenn ein bereits exisitert.
   Future<Database> _initDB(String filepath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filepath);
@@ -25,58 +28,57 @@ class einkaufslisteDB {
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
+//Datenbankschema wird erstellt
   Future _createDB(Database db, int version) async {
 
-    final idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    final textType = 'TEXT NOT NULL';
-    final textTypeNull = 'TEXT';
+    const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    const textType = 'TEXT NOT NULL';
+    const textTypeNull = 'TEXT';
 
     await db.execute('''CREATE TABLE $tableEinkaufsliste (
-      ${EinkaufslisteFields.id} $idType,
-      ${EinkaufslisteFields.name} $textType,
-      ${EinkaufslisteFields.menge} $textTypeNull
+      ${EinkaufslisteItemFields.id} $idType,
+      ${EinkaufslisteItemFields.name} $textType,
+      ${EinkaufslisteItemFields.menge} $textTypeNull
       ) 
       '''); 
   }
 
-  Future<Einkaufsliste> create(Einkaufsliste einkaufsliste) async {
+//Datenbankeintrag wird erstellt
+  Future<EinkaufslisteItem> create(EinkaufslisteItem einkaufsliste) async {
     final db = await instance.database;
 
     final id = await db.insert(tableEinkaufsliste, einkaufsliste.toJson());
     return einkaufsliste.copy(id: id);
   }
 
-  Future<List<Einkaufsliste>> read() async {
+//alle Datenbankeinträge werden gelesen
+  Future<List<EinkaufslisteItem>> read() async {
     final db = await instance.database;
     final result = await db.query(tableEinkaufsliste, orderBy: "einkaufsliste.name");
 
-    return result.map((json) => Einkaufsliste.fromJson(json)).toList();
+    return result.map((json) => EinkaufslisteItem.fromJson(json)).toList();
   }
 
-    Future<int> update(Einkaufsliste einkaufsliste) async {
+//Datenbankeintrag wird geupdatet
+    Future<int> update(EinkaufslisteItem einkaufsliste) async {
     final db = await instance.database;
 
     return db.update(
       tableEinkaufsliste,
       einkaufsliste.toJson(),
-      where: '${EinkaufslisteFields.id} = ?',
+      where: '${EinkaufslisteItemFields.id} = ?',
       whereArgs: [einkaufsliste.id],
     );
   }
 
+//Datenbankeintrag wird gelöscht
   Future<int> delete(int id) async {
     final db = await instance.database;
 
     return await db.delete(
       tableEinkaufsliste,
-      where: '${EinkaufslisteFields.id} =?',
+      where: '${EinkaufslisteItemFields.id} =?',
       whereArgs: [id],
     );
   }
-
-  // Future close() async {
-  //   final db = await instance.database;
-
-  //   db.close();
-  // }
 }

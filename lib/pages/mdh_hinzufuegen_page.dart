@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:lebensmittelplaner/model/vorraete.dart';
-import 'package:lebensmittelplaner/database/databasevorraete.dart';
+import 'package:lebensmittelplaner/database/database_vorratsliste.dart';
 import 'package:flutter/cupertino.dart';
-import 'dart:developer';
 
 class MdhHinzufuegenPage extends StatefulWidget {
 
-  final List<Vorraete> mdhHinzufuegenListe;
-  
-  const MdhHinzufuegenPage({Key? key, required this.mdhHinzufuegenListe}) : super(key: key);
+  final List<VorratsItem> mdhHinzufuegenListe;
+  const MdhHinzufuegenPage({super.key, required this.mdhHinzufuegenListe});
 
   @override
   State<MdhHinzufuegenPage> createState() => _MdhHinzufuegenPageState();
@@ -16,27 +14,28 @@ class MdhHinzufuegenPage extends StatefulWidget {
 
 class _MdhHinzufuegenPageState extends State<MdhHinzufuegenPage> {
   DateTime heutigesDatum = DateTime.now();
-  DateTime? ausgewaehlteDateTime;
+  DateTime? ausgewaehltesDatum;
 
-      Future EditVorraete(int? id, String name, DateTime? mdh, String? menge) async {
+//Vorratsgegenstand wird geändert
+  Future bearbeitenVorratsItem(int? id, String name, DateTime? mdh, String? menge) async {
 
-      final vorraete = Vorraete(
-        id: id,
-        name: name,
-        mdh: mdh,
-        menge: menge,
-        benoetigtMdh: false,
-      );
-      
-      await meineDatenbank.instance.update(vorraete);
+    final vorraete = VorratsItem(
+      id: id,
+      name: name,
+      mdh: mdh,
+      menge: menge,
+      benoetigtMdh: false,
+    );
+    
+    await VorraeteDB.instance.update(vorraete);
 
-    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
+        title: const Text("Mindesthaltbarkeit hinzufügen"),
       ),
       body: Center( child: 
         Column(
@@ -44,14 +43,17 @@ class _MdhHinzufuegenPageState extends State<MdhHinzufuegenPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(widget.mdhHinzufuegenListe[0].name),
+            Text( ausgewaehltesDatum != null ? '$ausgewaehltesDatum'.split(' ')[0] : 'Kein Datum ausgewählt.'),
             SizedBox(
               height: 200,
               child: CupertinoDatePicker(
+                key: const Key('CupertinoDatePicker'),
                 mode: CupertinoDatePickerMode.date,
                 initialDateTime: heutigesDatum,
                 onDateTimeChanged: (DateTime newDateTime) {
-                  log(newDateTime.toString());
-                  ausgewaehlteDateTime = newDateTime;
+                  setState((){
+                    ausgewaehltesDatum = newDateTime;
+                  });
                 },
               ),
             ),
@@ -60,12 +62,12 @@ class _MdhHinzufuegenPageState extends State<MdhHinzufuegenPage> {
       ),
       persistentFooterButtons: [
         TextButton(
-          child: Text("Nächster Gegenstand"),
+          child: const Text("Nächster Gegenstand"),
           onPressed: () {
-            EditVorraete(
+            bearbeitenVorratsItem(
               widget.mdhHinzufuegenListe[0].id,
               widget.mdhHinzufuegenListe[0].name,
-              ausgewaehlteDateTime,
+              ausgewaehltesDatum,
               widget.mdhHinzufuegenListe[0].menge 
             ); 
             widget.mdhHinzufuegenListe.removeAt(0);

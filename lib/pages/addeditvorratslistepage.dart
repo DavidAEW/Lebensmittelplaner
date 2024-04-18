@@ -4,8 +4,9 @@ import 'package:lebensmittelplaner/model/vorraete.dart';
 import 'package:flutter/cupertino.dart';
 
 class AddEditVorratslistePage extends StatefulWidget {
-  final Vorraete? vorraete;
 
+  final Vorraete? vorraete;
+  
   const AddEditVorratslistePage({Key? key, this.vorraete}) : super(key: key);
 
   @override
@@ -13,12 +14,11 @@ class AddEditVorratslistePage extends StatefulWidget {
 }
 
 class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
-  DateTime? gewahltesDatum;
-  late bool benoetigtMdh;
-  DateTime heutigesDatum = DateTime.now();
-  late TextEditingController nameController;
-  late TextEditingController mengeController;
-  String? mengeError;
+    DateTime? gewahltesDatum;
+    late bool benoetigtMdh;
+    DateTime heutigesDatum = DateTime.now();
+    late TextEditingController nameController;
+    late TextEditingController mengeController;
 
   @override
   void initState() {
@@ -30,38 +30,22 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
     benoetigtMdh = widget.vorraete?.benoetigtMdh ?? false;
   }
 
-  Future<void> addEditVorraete(int? id, String name, DateTime? mdh, String? menge, bool benoetigtMdh) async {
-    if (!isNumeric(menge)) {
-      setState(() {
-        mengeError = 'Die Menge muss eine Zahl sein.';
-      });
-      return;
+    Future addEditVorraete(int? id, String name, DateTime? mdh, String? menge, bool benoetigtMdh) async {
+
+      final vorraete = Vorraete(
+        id: id,
+        name: name,
+        mdh: mdh,
+        menge: menge,
+        benoetigtMdh: benoetigtMdh,
+      );
+
+      if(vorraete.id == null){
+        await meineDatenbank.instance.create(vorraete);
+      } else{
+        await meineDatenbank.instance.update(vorraete);
+      }
     }
-
-    final vorraete = Vorraete(
-      id: id,
-      name: name,
-      mdh: mdh,
-      menge: menge,
-      benoetigtMdh: benoetigtMdh,
-    );
-
-    if (vorraete.id == null) {
-      await meineDatenbank.instance.create(vorraete);
-    } else {
-      await meineDatenbank.instance.update(vorraete);
-    }
-
-    // Zurück zur vorherigen Seite nach dem Hinzufügen
-    Navigator.of(context).pop();
-  }
-
-  bool isNumeric(String? value) {
-    if (value == null) {
-      return false;
-    }
-    return double.tryParse(value) != null;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,51 +54,58 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
         title: const Text("Vorratsgegenstand hinzufügen"),
       ),
       body: Center (
-        child: Column(
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(
-                hintText: 'Name',
+        child: 
+          Column(
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  hintText: 'Name',
+                )
               ),
-            ),
-            TextField(
-              controller: mengeController,
-              decoration: InputDecoration(
-                hintText: 'Menge',
-                errorText: mengeError,
+
+              TextField(
+                controller: mengeController,
+                decoration: InputDecoration(
+                  hintText: 'Menge',
+                )
               ),
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-            ),
-            SizedBox(
-              height: 200,
-              child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.date,
-                initialDateTime: heutigesDatum,
-                onDateTimeChanged: (DateTime newDateTime) {
-                  gewahltesDatum = newDateTime;
-                },
+              SizedBox(
+                height: 200,
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: heutigesDatum,
+                  onDateTimeChanged: (DateTime newDateTime) {
+                    gewahltesDatum = newDateTime;
+                  },
+                ),
               ),
-            ),
-            TextButton(
-              onPressed: () async {
-                // Vor dem Hinzufügen Fehlermeldung zurücksetzen
-                setState(() {
-                  mengeError = null;
-                });
-                // Vorratsgegenstand hinzufügen/bearbeiten
-                await addEditVorraete(
-                    widget.vorraete?.id,
-                    nameController.text,
-                    gewahltesDatum,
-                    mengeController.text,
-                    benoetigtMdh
-                );
-              },
-              child: Text('Hinzufügen'),
-            )
-          ],
-        ),
+              // Column(
+              //   mainAxisSize: MainAxisSize.min,
+              //   children: <Widget>[
+              //     Text("${gewahltesDatum?.toLocal()}".split(' ')[0]),
+              //     const SizedBox(height: 20.0,),
+              //     ElevatedButton(
+              //       onPressed: () => _selectDate(context),
+              //       child: const Text('Select date'),
+              //     ),
+              //   ],
+              // ),
+              TextButton(
+                onPressed: () async {
+                  addEditVorraete(
+                    widget.vorraete?.id, 
+                    nameController.text, 
+                    gewahltesDatum, 
+                    mengeController.text, 
+                  benoetigtMdh);
+                  Navigator.of(context).pop();
+                }, 
+                child: 
+                  Text('Hinzufügen'),
+              )
+            ],
+        )
       ),
     );
   }

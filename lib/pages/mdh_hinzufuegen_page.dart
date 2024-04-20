@@ -77,7 +77,7 @@ class _MdhHinzufuegenPageState extends State<MdhHinzufuegenPage> {
                 MaterialPageRoute(builder: (context) => MdhHinzufuegenPage(mdhHinzufuegenListe: widget.mdhHinzufuegenListe)),
               );
             } else {
-              Navigator.pop(context);
+              Navigator.pushReplacementNamed(context, '/Vorratsliste');
             }
           }
         ),

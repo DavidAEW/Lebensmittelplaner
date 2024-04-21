@@ -1,10 +1,42 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebensmittelplaner/model/vorraete.dart';
 import 'package:lebensmittelplaner/model/einkaufsliste.dart';
+import 'package:lebensmittelplaner/pages/bearbeiten_einkaufsliste_page.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:lebensmittelplaner/database/database_einkaufsliste.dart';
+import 'package:lebensmittelplaner/pages/einkaufsliste_page.dart';
+import 'dart:developer';
+
 void main() {
 
+  //InMemoryDatenbank, um diese zu testen
   databaseFactory = databaseFactoryFfi;
+  sqfliteFfiInit();
+
+
+  test('Teste Create in EinkaufslistenDatenbank', () async {
+    EinkaufslisteDB.instance.create(const EinkaufslisteItem(name: 'Einkaufsliste 1'));
+    late List<EinkaufslisteItem> einkaufslisteItemList = [];
+     einkaufslisteItemList = await EinkaufslisteDB.instance.read();
+    expect(einkaufslisteItemList[0].name,'Einkaufsliste 1');
+  });
+  
+  test('Teste Update in EinkaufslistenDatenbank', () async {
+    late List<EinkaufslisteItem> einkaufslisteItemList = [];
+    einkaufslisteItemList = await EinkaufslisteDB.instance.read();
+    EinkaufslisteItem itemMitNeuemNamen = EinkaufslisteItem(id: einkaufslisteItemList[0].id, name: 'neuer Name');
+    await EinkaufslisteDB.instance.update(itemMitNeuemNamen);
+     einkaufslisteItemList = await EinkaufslisteDB.instance.read();
+    expect(einkaufslisteItemList[0].name,'neuer Name');
+  });
+
+  test('Teste Delete in EinkaufslistenDatenbank', () async {
+    late List<EinkaufslisteItem> einkaufslisteItemList = [];
+    einkaufslisteItemList = await EinkaufslisteDB.instance.read();
+    EinkaufslisteDB.instance.delete(einkaufslisteItemList[0].id!);
+     einkaufslisteItemList = await EinkaufslisteDB.instance.read();
+    expect(einkaufslisteItemList.length,0);
+  });
 
   test('toJson einkaufsliste', (){
     EinkaufslisteItem inital = const EinkaufslisteItem(id: 123, name: 'Einkaufsliste 1', menge: '5');

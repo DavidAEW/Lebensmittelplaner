@@ -69,6 +69,7 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
       ),
       body: Center (
         child: 
+        SingleChildScrollView(child: 
           Column(
             children: [
               TextField(
@@ -121,6 +122,7 @@ class _AddEditVorratslistePageState extends State<AddEditVorratslistePage> {
               )
             ],
         )
+      ),
       ),
     );
   }

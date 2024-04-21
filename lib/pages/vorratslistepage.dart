@@ -15,7 +15,7 @@ class VorratslistePage extends StatefulWidget {
 
 class _VorratslistePageState extends State<VorratslistePage> {
   late List<VorratsItem> vorratsItemList = [];
-  late List<VorratsItem> vorrateListMitBenoetigenMdh = [];
+  late List<VorratsItem> vorratsListMitBenoetigenMdh = [];
   bool isLoading = false;
   bool showDeleteButton = false;
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -32,7 +32,7 @@ class _VorratslistePageState extends State<VorratslistePage> {
     setState(() => isLoading = true);
 
     vorratsItemList = await VorraeteDB.instance.read();
-    vorrateListMitBenoetigenMdh = vorratsItemList.where((obj) => obj.benoetigtMdh == true).toList();
+    vorratsListMitBenoetigenMdh = vorratsItemList.where((obj) => obj.benoetigtMdh == true).toList();
 
     setState(() => isLoading = false);
     }
@@ -57,19 +57,21 @@ Future loescheVorratsitem(id) async{
           ],
         ),
       body:
+        //Prüfe ob die Einkaufsliste leer ist. Wenn diese leer ist soll ein Text ausgegeben werden, asonsten alle Gegenstände in der Einkaufsliste
+        vorratsItemList.isNotEmpty ?
         Column( children: [
-        if (vorrateListMitBenoetigenMdh.isNotEmpty) Card(
+        if (vorratsListMitBenoetigenMdh.isNotEmpty) Card(
           child: InkWell(
             onTap: () {
               Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MdhHinzufuegenPage(mdhHinzufuegenListe: vorrateListMitBenoetigenMdh)),
+              MaterialPageRoute(builder: (context) => MdhHinzufuegenPage(mdhHinzufuegenListe: vorratsListMitBenoetigenMdh)),
               ).then((_) {
                 aktualisierenVorratsliste();
               });
             },
             child: Text(
-            '${vorrateListMitBenoetigenMdh.length} Items benötigen eine Mindesthaltbarkeit. Hier klicken um diese hinzuzufügen'),
+            '${vorratsListMitBenoetigenMdh.length} Items benötigen eine Mindesthaltbarkeit. Hier klicken, um diese hinzuzufügen'),
           )
         ),
         Flexible(child:
@@ -106,7 +108,13 @@ Future loescheVorratsitem(id) async{
           );
         }
       ),),
-      ]),
+      ])
+      :
+      const Center( child:
+        Text(
+          'Vorratsliste ist leer. Drücke auf das + oder auf den ✓ in der Einkaufsliste, um Items hier hinzuzufügen.'
+        ),
+      ),
       persistentFooterButtons: [
         IconButton(
           icon: const Icon(Icons.add),

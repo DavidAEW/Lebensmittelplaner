@@ -68,7 +68,10 @@ Future hinzufuegenVorratsItem(String name, String? menge) async {
             ),
           ],
         ),
-      body: ListView.builder(
+      body: 
+      //Prüfe ob die Einkaufsliste leer ist. Wenn diese leer ist soll ein Text ausgegeben werden, asonsten alle Gegenstände in der Einkaufsliste
+        einkaufslisteItemList.isNotEmpty ?
+        ListView.builder(
         itemCount: einkaufslisteItemList.length,
         itemBuilder: (context, index){
           return Card(
@@ -108,6 +111,12 @@ Future hinzufuegenVorratsItem(String name, String? menge) async {
             ),
           );
         }
+      )
+      : 
+      const Center( child:
+        Text(
+          'Liste ist leer. Drücke auf das + um Items hinzuzufügen.'
+        ),
       ),
 
       persistentFooterButtons: [

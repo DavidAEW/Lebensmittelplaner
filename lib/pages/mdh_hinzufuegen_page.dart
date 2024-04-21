@@ -16,7 +16,7 @@ class _MdhHinzufuegenPageState extends State<MdhHinzufuegenPage> {
   DateTime heutigesDatum = DateTime.now();
   DateTime? ausgewaehltesDatum;
 
-//Vorratsgegenstand wird geändert
+//benoetigtMdh in Vorratsgegenstand wird auf false gesetzt und in der Datenbank persistiert
   Future bearbeitenVorratsItem(int? id, String name, DateTime? mdh, String? menge) async {
 
     final vorraete = VorratsItem(

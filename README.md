@@ -1,16 +1,7 @@
-# lebensmittelplaner
+# Lebensmittelplaner-App 
 
-A new Flutter project.
+Unsere App ist eine ultimative Lösung für die Verwaltung der Lebensmittel. Mit einer Vorratsliste und einer Einkaufsliste, die miteinander verbunden sind, behält man immer den Überblick über seine Bestände und kann so seinen Einkauf optimal planen.
 
-## Getting Started
+In der Einkaufsliste kann man ganz einfach Lebensmittel hinzufügen, die man benötigst. Sobald man sie gekauft und abgehakt hast, werden sie automatisch zur Vorratsliste hinzugefügt. Dort kann man jedes Produkt mit seinem Haltbarkeitsdatum versehen und behält so stets im Auge, welche Lebensmittel als nächstes verbraucht werden sollten.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Unsere App hilft nicht nur, die Lebensmittel effizient zu verwalten, sondern auch, die frische der Lebensmittel zu üperprüfen. Probiere es gleich aus und optimiere deine Lebensmittelorganisation noch heute!
